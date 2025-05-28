@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --color-base-400: #3e2c1c;
+}
+
+@plugin "daisyui/theme" {
+  default: true;
+  --color-primary: #9c3d24;
+  --color-primary-content: #fff;
+  --color-secondary: #a9a27a;
+  --color-secondary-content: #fff;
+  --color-neutral: #fff;
+  --color-base-100: #fffcf6;
+  --color-base-200: #f8f1e5;
+  --color-base-300: #d6b370;
+}
