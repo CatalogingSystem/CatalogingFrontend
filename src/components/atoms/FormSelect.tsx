@@ -14,8 +14,8 @@ interface Props<T extends FieldValues> {
   error?: FieldError;
   className?: string;
   type?: string;
-  options: string[]
-  defaultValue: string
+  options: string[] | { label: string; value: string }[];
+  defaultValue?: string;
 }
 
 export default function FormSelect<T extends FieldValues>({
@@ -25,7 +25,7 @@ export default function FormSelect<T extends FieldValues>({
   error,
   className,
   options,
-  defaultValue
+  defaultValue,
 }: Props<T>) {
   return (
     <fieldset className={`${className}`}>
@@ -35,10 +35,10 @@ export default function FormSelect<T extends FieldValues>({
         defaultValue={defaultValue}
         {...register(name)}
       >
-        <option disabled={true}>{defaultValue}</option>
+        {defaultValue && <option disabled={true}>{defaultValue}</option>}
         {options.map((item, i) => (
-          <option key={i} value={item}>
-            {formatText(item)}
+          <option key={i} value={typeof item === "string" ? item : item.value}>
+            {typeof item === "string" ? formatText(item) : item.label}
           </option>
         ))}
       </select>
