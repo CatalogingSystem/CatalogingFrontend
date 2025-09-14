@@ -4,17 +4,25 @@ import {
   IdentificationSchema,
   type IdentificationFormValues,
 } from "../../models/IdentificationModels/Identification.model";
-import { postIdentification } from "../../utils/connections";
+import {
+  getIdentification,
+  postIdentification,
+  putIdentification,
+} from "../../utils/connections";
 import { identificationTabs } from "../../constants/IdentificationTabs";
 import { useFormStore } from "../../Zustand/stores/FormStore";
 import { useParams } from "react-router-dom";
 import { useFormValuesStore } from "../../Zustand/stores/FormValueStore";
 import TabForm from "./TabForm";
+import { useCallback, useEffect, useState } from "react";
+import { useAuthStore } from "../../Zustand/stores/AuthStore";
 
 export default function IdentificationForm() {
-  const { tenantId } = useParams();
+  const { tenantId, record } = useParams();
+  const { jwt } = useAuthStore();
+  const [isEditMode, setIsEditMode] = useState(Boolean(record));
   const { nextStep } = useFormStore();
-  const { setValue } = useFormValuesStore();
+  const { initializeFormValues } = useFormValuesStore();
 
   const methods = useForm<IdentificationFormValues>({
     resolver: zodResolver(
@@ -23,10 +31,48 @@ export default function IdentificationForm() {
     mode: "onBlur",
   });
 
+  const fetchData = useCallback(async () => {
+    try {
+      if (isEditMode) {
+        const data = await getIdentification(
+          Number(record),
+          tenantId || "",
+          jwt
+        );
+
+        const formattedData = {
+          ...data,
+          expediente: data.expediente.toString(),
+          inventory: data.inventory.toString(),
+          numberOfObjects: data.numberOfObjects.toString(),
+          author: {
+            ...data.author,
+            birthDate: data.author.birthDate
+              ? new Date(data.author.birthDate).toISOString().split("T")[0]
+              : "",
+            deathDate: data.author.deathDate
+              ? new Date(data.author.deathDate).toISOString().split("T")[0]
+              : "",
+          },
+        };
+        methods.reset(formattedData);
+      }
+    } catch {
+      setIsEditMode(false);
+    }
+  }, [isEditMode, jwt, methods, record, tenantId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const onSubmit = methods.handleSubmit(async (data) => {
-    console.log("Formulario completo enviado:", data);
-    setValue("inventory", data.inventory);
-    await postIdentification(data, tenantId || "");
+    if (isEditMode) {
+      await putIdentification(data, tenantId || "", Number(record), jwt);
+    } else {
+      await postIdentification(data, tenantId || "", jwt);
+    }
+    initializeFormValues("identification", data);
     nextStep();
   });
 
