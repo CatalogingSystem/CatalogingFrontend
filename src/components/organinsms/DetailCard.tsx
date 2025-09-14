@@ -19,7 +19,7 @@ export default function DetailCard({ title, panels }: Props) {
             {panel.items.map((item, i) => (
               <div key={i} className="flex flex-col text-sm">
                 <h4 className="font-semibold opacity-60">{item.title}</h4>
-                <p>{item.value || "Sin Especificar"}</p>
+                <p className="break-words">{item.value || "Sin Especificar"}</p>
               </div>
             ))}
           </article>

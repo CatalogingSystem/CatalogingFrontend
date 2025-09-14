@@ -7,9 +7,10 @@ export interface TabComponent {
 
 interface Props {
   items: TabComponent[];
+  submitButtonLabel?: string;
 }
 
-export default function TabForm({ items }: Props) {
+export default function TabForm({ items, submitButtonLabel }: Props) {
   const [selectedTab, setSelectedTab] = useState(0);
 
   return (
@@ -31,7 +32,7 @@ export default function TabForm({ items }: Props) {
 
       <div className="flex justify-end gap-2">
         <button type="submit" className="btn btn-primary">
-          Siguiente
+          {submitButtonLabel || "Siguiente"}
         </button>
       </div>
     </div>

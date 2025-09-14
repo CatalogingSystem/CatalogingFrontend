@@ -12,12 +12,12 @@ export default function StepForm({ items }: Props) {
   useEffect(() => {
     setTotalSteps(items.length);
     setTitle(items[step]?.tabTitle || "");
-  }, [items, step, setTotalSteps, setTitle]);
+  }, [items.length, step, setTotalSteps, setTitle]);
 
   return (
     <div className="flex flex-col gap-8">
       <header className="flex">
-        <ul className="steps w-full">
+        <ul className="steps w-full ">
           {items.map((item, i) => (
             <li
               key={i}
