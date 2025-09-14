@@ -12,6 +12,7 @@ interface Props<T extends FieldValues> {
   name: Path<T>;
   error?: FieldError;
   className?: string;
+  inputClassName?: string;
   type?: string;
   value?: string;
   readOnly?: boolean;
@@ -24,6 +25,7 @@ export default function FormInput<T extends FieldValues>({
   name,
   error,
   className,
+  inputClassName,
   type,
   value,
   readOnly = false,
@@ -32,7 +34,10 @@ export default function FormInput<T extends FieldValues>({
     <fieldset className={`${className}`}>
       <legend>{label}</legend>
       <input
-        className="input w-full bg-base-100"
+        autoComplete="off"
+        className={`bg-base-100 ${inputClassName} ${
+          type !== "color" ? "input w-full" : ""
+        }`}
         placeholder={placeholder}
         type={type}
         readOnly={readOnly}
