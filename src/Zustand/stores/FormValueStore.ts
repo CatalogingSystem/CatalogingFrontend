@@ -1,28 +1,42 @@
 import { create } from "zustand";
 
 type FormValueStore = {
-  values: Record<string, any>;
-  setValue: (field: string, value: any) => void;
-  getValue: (field: string) => any;
+  values: Record<string, Record<string, any>>;
+  setValue: (form: string, field: string, value: any) => void;
+  getValue: (form: string, field: string) => any;
   reset: () => void;
+  initializeFormValues: (form: string, data: Record<string, any>) => void;
 };
 
 export const useFormValuesStore = create<FormValueStore>((set, get) => ({
   values: {},
-  setValue: (field, value) => {
+
+  setValue: (form, field, value) => {
     set((state) => ({
       values: {
         ...state.values,
-        [field]: value,
+        [form]: {
+          ...state.values[form],
+          [field]: value,
+        },
       },
     }));
   },
-  getValue: (field) => {
-    return get().values[field];
+
+  getValue: (form, field) => {
+    return get().values[form]?.[field];
   },
+
   reset: () => {
-    set(() => ({
-      values: {},
+    set(() => ({ values: {} }));
+  },
+
+  initializeFormValues: (form, data) => {
+    set((state) => ({
+      values: {
+        ...state.values,
+        [form]: { ...data },
+      },
     }));
   },
 }));
