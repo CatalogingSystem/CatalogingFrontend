@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const institutionEnum = [
-  "U.M.R.P.S.F.X.CH",
+  "UMRPSFXCH",
   "IglesiaDeChuquisaca",
   "InstitucionPublica",
   "InstitucionPrivada",
@@ -9,7 +9,7 @@ export const institutionEnum = [
   "ColeccionPrivada",
   "PersonaJuridica",
   "PersonaNatural",
-] as const 
+] as const;
 
 export const documentTypeEnum = [
   "PorDecomiso",
@@ -37,18 +37,19 @@ export const documentTypeEnum = [
 ] as const;
 
 export const BasicInformationSchema = z.object({
-  institucion: z.enum(institutionEnum, {message: 'Seleccione una opcion'}),
-  unidad: z.string().trim().min(1),
+  institucion: z.enum(institutionEnum, { message: "Seleccione una institución" }),
+  unidad: z.string().trim().min(1, { message: "La unidad es obligatoria" }),
   expediente: z
     .string()
     .refine((val) => !isNaN(Number(val)), {
-      message: "Serie must be a number",
+      message: "El expediente debe ser un número",
     })
     .refine((val) => Number(val) > 0, {
-      message: "Serie must be greater than 0",
+      message: "El expediente debe ser mayor a 0",
     }),
   serie: z.string(),
-  documentoOrigen: z.enum(documentTypeEnum, {message: ''}),
+  documentoOrigen: z.enum(documentTypeEnum, { message: "Seleccione un tipo de documento" }),
 });
+
 
 export type BasicInformationFormValues = z.infer<typeof BasicInformationSchema>;
