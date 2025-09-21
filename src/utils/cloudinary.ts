@@ -1,7 +1,13 @@
-export const uploadImage = async (data: File): Promise<string | null> => {
+export const uploadImage = async (
+  data: File,
+  tenant?: string
+): Promise<string | null> => {
   const formData = new FormData();
   formData.append("file", data);
   formData.append("upload_preset", "tenant");
+  if (tenant) {
+    formData.append("folder", `tenants/${tenant}`);
+  }
 
   try {
     const response = await fetch(
@@ -11,7 +17,6 @@ export const uploadImage = async (data: File): Promise<string | null> => {
         body: formData,
       }
     );
-    console.log(response)
     const result = await response.json();
 
     if (response.ok) {
