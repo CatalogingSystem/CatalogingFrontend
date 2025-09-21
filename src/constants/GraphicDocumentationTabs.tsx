@@ -1,8 +1,10 @@
-import AuthorImageGraphicDocumentationForm from "../components/organinsms/AuthorImageGraphicDocumentationForm";
-import GeneralInformationGraphicDocumentationForm from "../components/organinsms/GeneralInformationGraphicDocumentation";
-import ImagesGraphicDocumentationForm from "../components/organinsms/ImagesGraphicDocumentationForm";
-import ObservationGraphicDocumentationForm from "../components/organinsms/ObservationGraphicDocumentationForm";
-import SpecificInformationGraphicDocumentationForm from "../components/organinsms/SpecificInformationGraphicDocumentation";
+import {
+  AuthorImageGraphicDocumentationForm,
+  GeneralInformationGraphicDocumentationForm,
+  ImagesGraphicDocumentationForm,
+  ObservationGraphicDocumentationForm,
+  SpecificInformationGraphicDocumentationForm,
+} from "../components/molecules/GraphicDocumentationForm";
 
 export const graphicDocumentationTabs = [
   {
