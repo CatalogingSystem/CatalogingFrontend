@@ -1,39 +1,46 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getTenants } from "../../utils/connections";
 import TenantList from "../organinsms/TenantList";
-import { useNavigate } from "react-router-dom";
-import EmptyList from "../atoms/EmptyList";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuthStore } from "../../Zustand/stores/AuthStore";
+import PaginatedListTemplate from "../templates/PaginatedListTemplate";
 
 export default function TenantListPage() {
   const navigate = useNavigate();
+  const { jwt } = useAuthStore();
+  const { page } = useParams();
 
   const [tenantList, setTenantList] = useState([]);
-  const [tenantNumber, setTenantNumber] = useState<number>(0);
+  const [totalTenants, setTotalTenants] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
-  const handleOnClick = () => navigate("/create/institution");
+  const handleCreateTenant = () => navigate("/create/institution");
+
+  const handlePageChange = (selected: { selected: number }) => {
+    navigate(`/list/institution/${selected.selected + 1}`);
+  };
+
+  const fetchData = useCallback(async () => {
+    const data = await getTenants(jwt, page ? Number(page) : 1, 4);
+    setTenantList(data.items || []);
+    setTotalTenants(data.totalItems || 0);
+    setTotalPages(data.totalPages || 0);
+  }, [jwt, page]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setTenantList(await getTenants());
-      setTenantNumber(tenantList.length);
-    };
     fetchData();
-  }, [tenantList.length]);
+  }, [fetchData]);
 
   return (
-    <section className="grid p-8 gap-6 ">
-      <header className="flex justify-between font-semibold">
-        <h2 className="text-xl">Lista de instituciones ({tenantNumber})</h2>
-        <button className="btn btn-primary" onClick={handleOnClick}>
-          Nueva Institucion
-        </button>
-      </header>
-      {tenantList.length > 0 ? (
-
-      <TenantList items={tenantList} />
-      ):
-      <EmptyList title="No hay instituciones registradas todavia" description="Crea una para empezar!"/>
-      }
-    </section>
+    <PaginatedListTemplate
+      title="Lista de instituciones"
+      totalItems={totalTenants}
+      items={tenantList}
+      isEmpty={tenantList.length === 0}
+      onCreate={handleCreateTenant}
+      renderItem={(item, index) => <TenantList key={index} items={[item]} />}
+      pageCount={totalPages}
+      onPageChange={handlePageChange}
+    />
   );
 }
