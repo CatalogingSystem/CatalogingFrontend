@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const TypologyIdentificationSchema = z.object({
-  type: z.string().min(1).trim(),
+  type: z.string().min(1, { message: "El tipo es obligatorio" }).trim(),
   subtype: z.string().trim().optional(),
   class: z.string().trim().optional(),
   subclass: z.string().trim().optional(),
@@ -9,4 +9,6 @@ export const TypologyIdentificationSchema = z.object({
   suborder: z.string().trim().optional(),
 });
 
-export type TypologyIdentification = z.infer<typeof TypologyIdentificationSchema>
+export type TypologyIdentification = z.infer<
+  typeof TypologyIdentificationSchema
+>;
