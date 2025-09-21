@@ -1,18 +1,89 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-@theme {
-  --color-base-400: #3e2c1c;
-}
-
-@plugin "daisyui/theme" {
-  default: true;
-  --color-primary: #9c3d24;
-  --color-primary-content: #fff;
-  --color-secondary: #a9a27a;
-  --color-secondary-content: #fff;
+:root {
   --color-neutral: #fff;
+  --color-primary: #9c3d24;
+  --color-secondary: #a9a27a;
+  --color-primary-content: #fff;
+  --color-secondary-content: #fff;
+  --color-header: #d5b370;
   --color-base-100: #fffcf6;
   --color-base-200: #f8f1e5;
   --color-base-300: #d6b370;
+  --color-base-400: #3e2c1c;
+  --color-button-primary: #9c3d24;
+  --color-button-secondary: #a9a27a;
+  --color-step-default: #9c3d24;
+  --color-list-border: #d9d2c5;
+
+  --color-admin: #d6b370;
+  --color-modification: #6d625a;
+  --color-read-only: #6c7a89;
+  --color-director: #6d625a;
+  --color-researcher: #a9a27a;
+}
+
+h1,
+h2,
+h3,
+.header-text {
+  color: var(--color-black);
+}
+
+.btn-primary {
+  background-color: var(--color-button-primary);
+  color: var(--color-primary-content);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-button-primary);
+  color: var(--color-primary-content);
+}
+
+.btn-secondary {
+  background-color: var(--color-button-secondary);
+  color: var(--color-secondary-content);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-button-secondary);
+  color: var(--color-secondary-content);
+}
+
+.bordered-list {
+  background-color: var(--color-list-border);
+}
+
+.header {
+  background-color: var(--color-header);
+  color: var(--color-base-400);
+}
+
+.role-admin {
+  background-color: var(--color-admin);
+}
+.role-modification {
+  background-color: var(--color-modification);
+}
+.role-read-only {
+  background-color: var(--color-read-only);
+}
+.role-director {
+  background-color: var(--color-director);
+}
+.role-researcher {
+  background-color: var(--color-researcher);
+}
+.step-primary {
+  + .step-primary:before,
+  &:after,
+  > .step-icon {
+    --step-bg: var(--color-step-default);
+    --step-fg: var(--color-neutral);
+  }
+}
+
+.app-logo {
+  color: var(--color-primary);
 }

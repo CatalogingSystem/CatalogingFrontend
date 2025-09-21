@@ -12,30 +12,45 @@ export const IdentificationSchema = z.object({
   expediente: z
     .string()
     .refine((val) => !isNaN(Number(val)), {
-      message: "Serie must be a number",
+      message: "El expediente debe ser un número",
     })
     .refine((val) => Number(val) > 0, {
-      message: "Serie must be greater than 0",
+      message: "El expediente debe ser mayor a 0",
     }),
+
   inventory: z
     .string()
     .refine((val) => !isNaN(Number(val)), {
-      message: "Serie must be a number",
+      message: "El inventario debe ser un número",
     })
     .refine((val) => Number(val) > 0, {
-      message: "Serie must be greater than 0",
+      message: "El inventario debe ser mayor a 0",
     }),
+
   numberOfObjects: z
     .string()
     .refine((val) => !isNaN(Number(val)), {
-      message: "Serie must be a number",
+      message: "La cantidad de objetos debe ser un número",
     })
     .refine((val) => Number(val) > 0, {
-      message: "Serie must be greater than 0",
+      message: "La cantidad de objetos debe ser mayor a 0",
     }),
-  genericClassification: z.string().min(1).trim(),
-  objectName: z.string().min(1).trim(),
-  observations: z.string().trim().optional(),
+
+  genericClassification: z
+    .string()
+    .min(1, { message: "La clasificación genérica es obligatoria" })
+    .trim(),
+
+  objectName: z
+    .string()
+    .min(1, { message: "El nombre del objeto es obligatorio" })
+    .trim(),
+
+  observations: z
+    .string()
+    .min(1, { message: "Las observaciones son obligatorias" })
+    .trim(),
+
   typology: TypologyIdentificationSchema,
   specificName: SpecificNameIdentificationSchema,
   author: AuthorIdentificationSchema,

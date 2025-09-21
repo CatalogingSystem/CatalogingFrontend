@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const SectionIdentificationSchema = z.object({
-  room: z.string().min(1).trim(),
+  room: z.string().min(1, { message: "La sala es obligatoria" }).trim(),
   panel: z.string().trim().optional(),
   displayCase: z.string().trim().optional(),
   easel: z.string().trim().optional(),

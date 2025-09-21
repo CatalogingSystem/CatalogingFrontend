@@ -2,12 +2,11 @@ import { z } from "zod";
 
 export const AuthorIdentificationSchema = z
   .object({
-    name: z.string().min(1).trim(),
+    name: z.string().min(1, { message: "El nombre es obligatorio" }).trim(),
 
     birthPlace: z
       .string()
-      .transform((val) => val?.trim() || null)
-      .nullable(),
+      .min(1, { message: "El lugar de nacimiento es obligatorio" }),
 
     birthDate: z
       .string()
@@ -16,12 +15,11 @@ export const AuthorIdentificationSchema = z
         return trimmed === "" ? null : new Date(trimmed);
       })
       .refine((val) => val === null || !isNaN(val.getTime?.()), {
-        message: "Birth date must be a valid date",
+        message: "La fecha de nacimiento debe ser válida",
       })
       .refine((val) => val === null || val <= new Date(), {
-        message: "Birth date cannot be in the future",
-      })
-      .nullable(),
+        message: "La fecha de nacimiento no puede estar en el futuro",
+      }),
 
     deathPlace: z
       .string()
@@ -35,7 +33,7 @@ export const AuthorIdentificationSchema = z
         return trimmed === "" ? null : new Date(trimmed);
       })
       .refine((val) => val === null || !isNaN(val.getTime?.()), {
-        message: "Death date must be a valid date",
+        message: "La fecha de defunción debe ser válida",
       })
       .nullable(),
   })
@@ -45,7 +43,7 @@ export const AuthorIdentificationSchema = z
       return data.deathDate > data.birthDate;
     },
     {
-      message: "Death date must be after birth date",
+      message: "La fecha de defunción debe ser posterior a la de nacimiento",
       path: ["deathDate"],
     }
   );
