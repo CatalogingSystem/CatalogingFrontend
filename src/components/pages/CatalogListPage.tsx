@@ -1,14 +1,19 @@
 import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+
 import CatalogItemList, {
   type CatalogModel,
 } from "../organinsms/CatalogItemList";
-import { useEffect, useState } from "react";
 import { getCatalogList } from "../../utils/connections";
-import ReactPaginate from "react-paginate";
 import { useListStore } from "../../Zustand/stores/ListStore";
-import SearchInput from "../atoms/SearchInput";
 import { catalogListFilterList } from "../../constants/CatalogListFilterList";
-import EmptyList from "../atoms/EmptyList";
+import { useAuthStore } from "../../Zustand/stores/AuthStore";
+import { jwtDecode } from "jwt-decode";
+import PaginatedListTemplate from "../templates/PaginatedListTemplate";
+import DialogTemplate from "../templates/DialogTemplate";
+import { useDialogStore } from "../../Zustand/stores/DialogStore";
+import ImportForm from "../organinsms/ImportForm";
+import RecordConflictForm from "../organinsms/RecordConflictForm";
 
 export interface CatalogResponse {
   items: CatalogModel[];
@@ -20,92 +25,95 @@ export interface CatalogResponse {
 
 export default function CatalogListPage() {
   const navigate = useNavigate();
+  const { tenantId = "", page = "1" } = useParams();
+  const pageNumber = parseInt(page, 10);
+  const { jwt } = useAuthStore();
+
   const { setRefreshFunction } = useListStore();
-  const { tenantId, page } = useParams();
-  const pageNumber = parseInt(page || "1", 10);
-  const [catalogNumber, setCatalogNumber] = useState<number>(0);
-  const [catalogList, setCatalogList] = useState<CatalogResponse>();
-  const [searchText, setSearchText] = useState<string>();
+  const { setDialogStatus } = useDialogStore();
+
+  const [catalogData, setCatalogData] = useState<CatalogResponse>();
+  const [searchText, setSearchText] = useState<string>("");
   const [searchParam, setSearchParam] = useState<string>("expediente");
+  const [isSearching, setIsSearching] = useState(false);
 
-  const handleOnClick = () => navigate(`/${tenantId}/create/catalog`);
+  const fetchCatalogs = useCallback(async () => {
+    const isSearchMode = Boolean(searchParam && searchText);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      let result;
+    setIsSearching(isSearchMode);
 
-      if (searchParam && searchText)
-        result = await getCatalogList(
-          pageNumber,
-          4,
-          tenantId || "",
-          searchParam,
-          searchText
-        );
-      else result = await getCatalogList(pageNumber, 4, tenantId || "");
+    const result = await getCatalogList(
+      pageNumber,
+      4,
+      tenantId,
+      jwt,
+      searchParam,
+      searchText
+    );
+    setCatalogData(result);
+    setRefreshFunction(fetchCatalogs);
 
-      setCatalogList(result);
-      setCatalogNumber(result.totalItems || 0);
-      setRefreshFunction(fetchData);
-
-      if (result?.items.length === 0 && pageNumber > 1)
-        navigate(`/${tenantId}/catalog/${pageNumber - 1}`);
-    };
-    fetchData();
+    if (result?.items.length === 0 && pageNumber > 1) {
+      navigate(`/${tenantId}/catalog/${pageNumber - 1}`);
+    }
   }, [
-    tenantId,
-    page,
-    pageNumber,
     searchParam,
     searchText,
+    pageNumber,
+    tenantId,
+    jwt,
     setRefreshFunction,
     navigate,
   ]);
 
-  const goToPage = (e: { selected: number }) => {
-    navigate(`/${tenantId}/catalog/${e.selected + 1}`);
+  useEffect(() => {
+    fetchCatalogs();
+  }, [fetchCatalogs]);
+
+  const handleCreateCatalog = () => {
+    navigate(`/${tenantId}/create/catalog`);
   };
 
-  if (!catalogList) return <></>;
+  const handlePageChange = ({ selected }: { selected: number }) => {
+    navigate(`/${tenantId}/catalog/${selected + 1}`);
+  };
+
+  if (!catalogData) return null;
+
+  const { items, totalItems, totalPages } = catalogData;
+  const isEmpty = items.length === 0 && !isSearching;
 
   return (
-    <section
-      className={`grid p-8 gap-6 ${catalogList.items.length < 1 && "h-full"}`}
-    >
-      <header className="flex justify-between font-semibold">
-        <h2 className="text-xl">Lista de Catálogos ({catalogNumber})</h2>
-        <button className="btn btn-primary" onClick={handleOnClick}>
-          Nuevo Catálogo
-        </button>
-      </header>
-      {catalogList?.items.length > 0 ? (
-        <>
-          <SearchInput
-            items={catalogListFilterList}
-            onChangeSelect={setSearchParam}
-            onChangeValue={setSearchText}
-          />
-          <CatalogItemList items={catalogList?.items || []} />
-          <ReactPaginate
-            className="flex gap-2 place-self-center"
-            pageLinkClassName="px-2 hover:cursor-pointer hover:rounded-md hover:bg-primary hover:text-white"
-            pageClassName="rounded-md"
-            activeLinkClassName="bg-primary text-white rounded-md"
-            breakLabel="..."
-            pageCount={catalogList?.totalPages || 1}
-            onPageChange={goToPage}
-            nextLabel=">"
-            nextClassName="px-2 hover:cursor-pointer hover:rounded-md hover:bg-primary hover:text-white"
-            previousLabel="<"
-            previousClassName="px-2 hover:cursor-pointer hover:rounded-md hover:bg-primary hover:text-white"
-          />
-        </>
-      ) : (
-        <EmptyList
-          title="No hay objetos catalogados"
-          description="Tu coleccion de patrimonio cultural esta vacia"
-        />
-      )}
-    </section>
+    <>
+      <PaginatedListTemplate
+        title="Lista de Catálogos"
+        totalItems={totalItems}
+        items={items}
+        isEmpty={isEmpty}
+        canCreate={jwtDecode(jwt).PermissionLevel !== "ReadOnly"}
+        onCreate={handleCreateCatalog}
+        canBeImported={jwtDecode(jwt).PermissionLevel !== "ReadOnly"}
+        onImport={() => setDialogStatus("catalogImportDialog", true)}
+        renderItem={(item) => <CatalogItemList key={item.id} items={[item]} />}
+        pageCount={totalPages}
+        onPageChange={handlePageChange}
+        showSearch
+        searchItems={catalogListFilterList}
+        onSearchParamChange={setSearchParam}
+        onSearchTextChange={setSearchText}
+      />
+      <DialogTemplate
+        onClose={() => setDialogStatus("catalogImportDialog", false)}
+        dialogId="catalogImportDialog"
+      >
+        <ImportForm />
+      </DialogTemplate>
+      <DialogTemplate
+        onClose={() => setDialogStatus("recordConflictDialog", false)}
+        dialogId="recordConflictDialog"
+      >
+        <RecordConflictForm />
+      </DialogTemplate>
+    </>
   );
 }

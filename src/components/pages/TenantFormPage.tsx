@@ -4,11 +4,13 @@ import FormTemplate from "../templates/FormTemplate";
 import { useFormStore } from "../../Zustand/stores/FormStore";
 
 export default function TenantFormPage() {
-  const {setTitle} = useFormStore();
+  const { setTitle, reset } = useFormStore();
 
   useEffect(() => {
     setTitle("Crear Nueva Institucion");
-  }, [setTitle]);
+
+    return () => reset();
+  }, [setTitle, reset]);
 
   return (
     <FormTemplate

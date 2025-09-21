@@ -1,27 +1,50 @@
+import { useEffect } from "react";
+import AdminFileFormPage from "../organinsms/AdminFileForm";
 import GraphicDocumentation from "../organinsms/GraphicDocumentation";
 import IdentificationForm from "../organinsms/IdentificationForm";
 import StepForm from "../organinsms/StepForm";
 import FormTemplate from "../templates/FormTemplate";
-import AdminFileFormPage from "./AdminFileFormPage";
+import { useFormStore } from "../../Zustand/stores/FormStore";
+import DatingForm from "../organinsms/DatingForm";
+import AdministrativeDataForm from "../organinsms/AdministrativeDataForm";
+import ConservationForm from "../organinsms/ConservationForm";
 
 export default function CatalogFormPage() {
+  const { reset } = useFormStore();
+
   const steps = [
     {
-      id: 1,
       tabTitle: "Archivo Administrativo",
       component: <AdminFileFormPage />,
     },
     {
-      id: 2,
       tabTitle: "Identificacion",
-      component: <IdentificationForm />
+      component: <IdentificationForm />,
     },
     {
-      id: 3,
+      tabTitle: "Datos Administrativa",
+      component: <AdministrativeDataForm />,
+    },
+    {
+      tabTitle: "Conservacion",
+      component: <ConservationForm />,
+    },
+    {
       tabTitle: "Documentacion Grafica",
       component: <GraphicDocumentation />,
     },
+    {
+      tabTitle: "Datacion",
+      component: <DatingForm />,
+    },
   ];
+
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, [reset]);
+
   return (
     <FormTemplate>
       <StepForm items={steps} />
