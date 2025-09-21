@@ -1,4 +1,4 @@
-export function formatText(input: string): string {
+function formatText(input: string): string {
   return input
     .split(' ')
     .map((word) => {
@@ -9,3 +9,10 @@ export function formatText(input: string): string {
     })
     .join(' ');
 }
+
+function formatDate(input: string): string {
+  const date = new Date(input);
+  return date.toLocaleDateString("es-BO");
+}
+
+export { formatText, formatDate };
