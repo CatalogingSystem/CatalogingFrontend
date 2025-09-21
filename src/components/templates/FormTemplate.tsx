@@ -1,4 +1,3 @@
-// src/templates/FormTemplate.tsx
 import { type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormStore } from "../../Zustand/stores/FormStore";
@@ -29,7 +28,9 @@ export default function FormTemplate({
         {children}
         <nav className="flex justify-between mt-4">
           <button
-            className={`btn btn-secondary max-w-fit ${cancelBtn ? "" : "hidden"}`}
+            className={`btn btn-secondary max-w-fit ${
+              cancelBtn ? "" : "hidden"
+            }`}
             onClick={() => navigate(-1)}
           >
             {cancelBtn}
