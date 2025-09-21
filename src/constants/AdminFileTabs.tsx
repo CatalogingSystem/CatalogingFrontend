@@ -1,6 +1,8 @@
-import AdditionalDetailsForm from "../components/organinsms/AdditionalDetailsForm";
-import BasicInformationForm from "../components/organinsms/BasicInformationForm";
-import DatesForm from "../components/organinsms/DatesForm";
+import {
+  AdditionalDetailsForm,
+  BasicInformationForm,
+  DatesForm,
+} from "../components/molecules/AdminFileForms";
 
 export const adminFileTabs = [
   {

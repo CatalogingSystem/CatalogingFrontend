@@ -1,12 +1,14 @@
-import AuthorIdentificationForm from "../components/organinsms/AuthorIdentificationForm";
-import GeneralInformationIdentificationForm from "../components/organinsms/GeneralInformationIdentificationForm";
-import ObservationIdentificationForm from "../components/organinsms/ObservationIdentificationForm";
-import SectionIdentificationForm from "../components/organinsms/SectionIdentificationForm";
-import SpecificNameIdentificationForm from "../components/organinsms/SpecificNameIdentificationForm";
-import MaterialIdentificationForm from "../components/organinsms/SubjectIdentificationForm";
-import TechniqueIdentificationForm from "../components/organinsms/TechniqueIdentificationForm";
-import TitleIdentificationForm from "../components/organinsms/TitleIdentificationForm";
-import TypologyIdentificationForm from "../components/organinsms/TypologyIdentificationForm";
+import {
+  GeneralInformationIdentificationForm,
+  SectionIdentificationForm,
+  TypologyIdentificationForm,
+  SpecificNameIdentificationForm,
+  AuthorIdentificationForm,
+  TitleIdentificationForm,
+  MaterialIdentificationForm,
+  TechniqueIdentificationForm,
+  ObservationIdentificationForm,
+} from "../components/molecules/IdentificationForm";
 
 export const identificationTabs = [
   {
