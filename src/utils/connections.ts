@@ -13,7 +13,7 @@ import type { AdministrativeData } from "../models/AdministrativeData/Administra
 import type { Conservation } from "../models/Conservation/Conservation.model";
 import type { TemporalMovement } from "../models/TemporalMovement/TemporalMovement.model";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 export const getTenants = async (
   jwt: string,
