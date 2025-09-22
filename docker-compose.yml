@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: CatalogingSystem_frontend
+    ports:
+      - "3001:80"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080
+    restart: unless-stopped
